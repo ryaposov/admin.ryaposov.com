@@ -1,0 +1,20 @@
+.header {
+	background: #000 !important;
+
+	&__grid,
+	&__input {
+		width: 100%;
+	}
+
+	&__logo {
+		margin-right: 25px !important;
+		margin-left: -16px !important;
+	}
+
+	&__search,
+	&__logo {
+		&::before {
+			display: none !important;
+		}
+	}
+}

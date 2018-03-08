@@ -1,0 +1,74 @@
+{
+  "private": true,
+  "name": "admin-portfolio-project",
+  "description": "Admin Panel for content management at ryaposov.com powered with Preact and React-Router",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
+    "build": "preact build",
+    "serve": "preact build && preact serve",
+    "dev": "preact watch",
+    "lint": "eslint src",
+    "test": "jest ./tests"
+  },
+  "eslintConfig": {
+    "extends": "eslint-config-synacor"
+  },
+  "eslintIgnore": [
+    "build/*"
+  ],
+  "devDependencies": {
+    "babel-plugin-transform-regenerator": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "copy-webpack-plugin": "^4.5.0",
+    "eslint": "^4.9.0",
+    "eslint-config-synacor": "^2.0.2",
+    "identity-obj-proxy": "^3.0.0",
+    "if-env": "^1.0.0",
+    "jest": "^21.2.1",
+    "node-sass": "^4.7.2",
+    "preact-cli": "^2.1.0",
+    "preact-render-spy": "^1.2.1",
+    "sass-loader": "^6.0.6"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "preact": "^8.2.6",
+    "preact-compat": "^3.18.0",
+    "preact-redux": "^2.0.3",
+    "preact-router": "^2.6.0",
+    "promise-polyfill": "7.1.0",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^5.9.1",
+    "redux-thunk": "^2.2.0",
+    "semantic-ui-css": "^2.3.0",
+    "semantic-ui-react": "^0.78.3",
+    "unfetch": "^3.0.0"
+  },
+  "jest": {
+    "verbose": true,
+    "setupFiles": [
+      "<rootDir>/src/tests/__mocks__/browserMocks.js"
+    ],
+    "testURL": "http://localhost:8080",
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/tests/__mocks__/fileMock.js",
+      "\\.(css|less|scss)$": "identity-obj-proxy",
+      "^./style$": "identity-obj-proxy",
+      "^preact$": "<rootDir>/node_modules/preact/dist/preact.min.js",
+      "^react$": "preact-compat",
+      "^react-dom$": "preact-compat",
+      "^create-react-class$": "preact-compat/lib/create-react-class",
+      "^react-addons-css-transition-group$": "preact-css-transition-group"
+    }
+  }
+}
