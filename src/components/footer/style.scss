@@ -1,0 +1,22 @@
+.footer {
+	background: #fff !important;
+	// margin-top: 100px !important;
+	margin-top: 0 !important;
+
+	&__grid,
+	&__input {
+		width: 100%;
+	}
+
+	&__logo {
+		margin-right: 25px !important;
+		margin-left: -16px !important;
+	}
+
+	&__search,
+	&__logo {
+		&::before {
+			display: none !important;
+		}
+	}
+}

@@ -1,27 +1,13 @@
 import { h, Component } from 'preact';
 import style from './style.scss';
 import { Container, Image, Menu, Input } from 'semantic-ui-react';
-import MenuLink from './link.js';
+import MenuLink from './link';
+import menuLinks from './menuLinks';
 
 class Header extends Component {
 	state = {
-		links: [
-			{
-				title: 'Dashboard',
-				link: '/'
-			},
-			{
-				title: 'Projects',
-				link: '/projects/'
-			},
-			{
-				title: 'Posts',
-				link: '/posts/'
-			}
-		]
+		links: menuLinks
 	}
-
-	goHome = (link) => this.props.history.push('/');
 
 	render ({ history }, { links }) {
 		return (
@@ -30,7 +16,7 @@ class Header extends Component {
 					<Menu.Item as="a" className={style.header__logo} header href="/">
 						<Image
 							size="mini"
-							src="/assets/icons/apple-touch-icon.png"
+							src="/assets/img/logo-white.svg"
 						/>
 					</Menu.Item>
 					{links.map(link => <MenuLink link={link} />)}

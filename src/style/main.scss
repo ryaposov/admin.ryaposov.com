@@ -1,3 +1,13 @@
+.app,
+.wrapper {
+	height: 100%;
+}
+
+.wrapper__content {
+	min-height: calc(100vh - 122px);
+	padding-bottom: 50px;
+}
+
 .wrapper {
 	padding-top: 61px;
 

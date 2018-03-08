@@ -6,6 +6,7 @@ import { Component } from 'preact';
 import Router from 'preact-router';
 
 import Header from './components/header';
+import Footer from './components/footer';
 import Home from './routes/home';
 import Projects from './routes/projects';
 import Project from './routes/project';
@@ -36,6 +37,7 @@ class Routes extends Component {
 						<Posts path="/posts/" />
 					</Router>
 				</div>
+				<Footer />
 			</div>
 		);
 	}
