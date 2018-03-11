@@ -14,7 +14,7 @@ import Project from './routes/project';
 import Posts from './routes/posts';
 import Post from './routes/post';
 import Login from './routes/login';
-import AppRouter from './components/AppRouter';
+import AppRouter from './components/appRouter';
 
 class Routes extends Component {
 	state = {
