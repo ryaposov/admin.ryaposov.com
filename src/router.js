@@ -1,5 +1,4 @@
 import { Component } from 'preact';
-import { connect } from 'preact-redux';
 import { BrowserRouter as Router,
 	Route,
 	Switch

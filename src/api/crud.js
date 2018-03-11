@@ -62,3 +62,12 @@ export const deleteMany = async (collection, ids) => {
 		return Promise.resolve(error);
 	}
 };
+
+export const search = async (collection, query) => {
+	try {
+		const data = await api(`/search/${collection ? collection + '/' : ''}?s=${query}`, { method: 'GET' });
+		return Promise.resolve(data);
+	} catch (error) {
+		return Promise.resolve(error);
+	}
+};
