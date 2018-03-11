@@ -1,6 +1,6 @@
 import { Component } from 'preact';
 import { Provider } from 'preact-redux';
-import configureStore from './store';
+import configureStore from './store/persist';
 import Router from './router.js';
 import { PersistGate } from 'redux-persist/es/integration/react';
 if (module.hot) require('preact/debug');
@@ -8,7 +8,7 @@ if (module.hot) require('preact/debug');
 const { persistor, store } = configureStore();
 
 export class App extends Component {
-	render() {
+	render () {
 		return (
 			<div class="app">
 				<Provider store={store}>

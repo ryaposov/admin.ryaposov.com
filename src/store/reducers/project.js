@@ -1,20 +1,22 @@
 import {
-	RECEIVE_PROJECTS
-} from './../actions/projects';
+	RECEIVE_PROJECT
+} from './../actions/project';
 
 let defaultState = {
 	isFetching: false,
 	didInvalidate: false,
-	items: []
+	project: {
+		notLoaded: true
+	}
 };
 
-function projects(state = defaultState, action) {
+function project (state = defaultState, action) {
 	switch (action.type) {
-		case RECEIVE_PROJECTS:
+		case RECEIVE_PROJECT:
 			return Object.assign({}, state, {
 				isFetching: false,
 				didInvalidate: false,
-				items: action.projects,
+				project: action.project,
 				lastUpdated: action.receivedAt
 			});
 		default:
@@ -22,4 +24,4 @@ function projects(state = defaultState, action) {
 	}
 }
 
-export default projects;
+export default project;

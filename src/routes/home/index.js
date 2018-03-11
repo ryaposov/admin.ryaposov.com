@@ -56,7 +56,7 @@ class Home extends Component {
 								<List divided relaxed>
 									{
 										[0,1,2,3,4,5,6,7].map(item => (
-											<List.Item>
+											<List.Item key={'projects' + item}>
 												<List.Content>
 													<List.Header as="span">
 														<Link href={`/projects/${item}`}>Semantic-Org/Semantic-UI</Link>
@@ -76,7 +76,7 @@ class Home extends Component {
 								<List divided relaxed>
 									{
 										[0,1,2,3,4,5,6,7].map(item => (
-											<List.Item>
+											<List.Item key={'posts' + item}>
 												<List.Content>
 													<List.Header as="span">
 														<Link href={`/projects/${item}`}>Semantic-Org/Semantic-UI</Link>

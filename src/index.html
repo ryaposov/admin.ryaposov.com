@@ -16,6 +16,7 @@
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
 		<% } %>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
 		<% for (var chunk of webpack.chunks) { %>
 		 <% if (chunk.names.length === 1 && chunk.names[0] === 'polyfills') continue; %>
 			<% for (var file of chunk.files) { %>

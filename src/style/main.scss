@@ -3,15 +3,12 @@
 	height: 100%;
 }
 
-.wrapper__content {
-	min-height: calc(100vh - 122px);
-	padding-bottom: 50px;
-}
-
 .wrapper {
 	padding-top: 61px;
 
 	&__content {
-		padding-top: 30px;
+		overflow: hidden;
+		min-height: calc(100vh - 122px);
+		padding: 30px 0 50px;
 	}
 }

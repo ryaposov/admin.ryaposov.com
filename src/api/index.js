@@ -1,16 +1,31 @@
 import fetch from 'unfetch';
+import store from '../store';
 
-export const config = {
-	options: { mode: 'cors' },
+export const config = () => ({
+	options: {
+		mode: 'cors',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	},
 	base: process.env.NODE_ENV === 'production'
-		? '//api.ryaposov.com/crud' : '//localhost:8082/crud'
-};
+		? '//api.ryaposov.com' : '//localhost:8082'
+});
+
 
 // Basic wrapper around fetch()
-export default (url, options = {}) => (
-	// Default options are marked with *
-	fetch(
-		config.base + url,
-		Object.assign(config.options, options)
-	).then(response => response.json())
-);
+export default (url, options = {}) => {
+	let state = store.getState();
+	let configuration = {};
+	configuration = Object.assign({}, config().options, options);
+	if (state.user.user.token) {
+		configuration.headers.authorization = state.user.user.token
+	}
+	console.log(configuration)
+	// console.log(Object.assign(config.options, options))
+	return fetch(config().base + url, configuration)
+		.then(async (response, i) => {
+			let body = await response.json();
+			return Object.assign(response, { bodyJson: body });
+		});
+};

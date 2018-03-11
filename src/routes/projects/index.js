@@ -1,7 +1,5 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
-import style from './style.scss';
-import { Link } from 'preact-router/match';
 import {
 	Container,
 	List,
@@ -10,17 +8,17 @@ import {
 	Header,
 	Grid,
 	Button,
-	Icon,
-	Label,
 	Pagination
 } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { fetchProjectsIfNeeded, createProject, fetchProjects } from '../../store/actions/projects';
+import Project from '../../components/projectItem';
 
 class Projects extends Component {
 	sections = [
 		{
 			key: 'Dashboard',
-			content: 'Dashboard',
-			href: '/'
+			content: (<Link to="/">Dashboard</Link>)
 		},
 		{
 			key: 'Projects',
@@ -29,14 +27,33 @@ class Projects extends Component {
 		}
 	];
 
-	render() {
+	state = {
+		createLoading: false
+	}
+
+	createProject = async () => {
+		this.setState({ createLoading: true });
+		let response = await createProject({ title: 'New Project' });
+		await this.props.dispatch(fetchProjects());
+		if (response.bodyJson && '_id' in response.bodyJson) {
+			this.setState({ createLoading: false });
+			this.props.history.push(`/projects/${response.bodyJson._id}/`);
+		}
+	}
+
+	async componentDidMount () {
+		const { dispatch } = this.props;
+		await dispatch(fetchProjectsIfNeeded());
+	}
+
+	render({ projects }, { createLoading }) {
 		return (
 			<Container>
 				<Grid columns="equal" verticalAlign="middle">
 			    <Grid.Row>
 			      <Grid.Column>
 							<Header as="span" size="huge">Projects</Header>
-							<Button basic size="small" compact style={{ marginLeft: '20px', verticalAlign: '5px' }}>New</Button>
+							<Button basic size="small" compact loading={createLoading} disabled={createLoading} style={{ marginLeft: '20px', verticalAlign: '5px' }} onClick={this.createProject}>New</Button>
 						</Grid.Column>
 						<Grid.Column computer={6} textAlign="right">
 							<Breadcrumb sections={this.sections} />
@@ -45,38 +62,9 @@ class Projects extends Component {
 			  </Grid>
 				<Divider />
 				<List divided relaxed="very">
-					{
-						[0,1,2,3,4,5,6,7].map(item => (
-							<List.Item>
-								<List.Content>
-									<Grid columns="equal" verticalAlign="middle">
-										<Grid.Row>
-											<Grid.Column>
-												<List.Header as="span">
-													<Link href={`/projects/${item}`}>Semantic-Org/Semantic-UI</Link>
-												</List.Header>
-												<List.Description as="span">Updated 10 mins ago</List.Description>
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Header as="span" size="tiny" disabled>2015</Header>
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Label as="span" content="Design" />
-												<Label as="span" content="Development" />
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Button basic size="small">Edit</Button>
-												<Button basic icon color="red" style={{ marginLeft: 'a10px' }} size="small">
-									        <Icon name="trash" />
-									      </Button>
-												<Icon name="bars" color="grey" style={{ marginLeft: '10px' }} />
-											</Grid.Column>
-										</Grid.Row>
-									</Grid>
-								</List.Content>
-							</List.Item>
-						))
-					}
+					{ projects.items && projects.items.map(project => (
+						<Project key={project._id} project={project} />
+					)) }
 					<Divider />
 					<Grid columns="equal" verticalAlign="middle">
 						<Grid.Row>

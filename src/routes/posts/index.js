@@ -1,7 +1,5 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
-import { Link } from 'preact-router/match';
-import style from './style.scss';
 import {
 	Container,
 	List,
@@ -10,17 +8,17 @@ import {
 	Header,
 	Grid,
 	Button,
-	Icon,
-	Label,
 	Pagination
 } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { fetchPostsIfNeeded, createPost, fetchPosts } from '../../store/actions/posts';
+import Post from '../../components/postItem';
 
 class Posts extends Component {
 	sections = [
 		{
 			key: 'Dashboard',
-			content: 'Dashboard',
-			href: '/'
+			content: (<Link to="/">Dashboard</Link>)
 		},
 		{
 			key: 'Posts',
@@ -29,21 +27,33 @@ class Posts extends Component {
 		}
 	];
 
-	render() {
+	state = {
+		createLoading: false
+	}
+
+	createPost = async () => {
+		this.setState({ createLoading: true });
+		let response = await createPost({ title: 'New Post' });
+		await this.props.dispatch(fetchPosts());
+		if (response.bodyJson && '_id' in response.bodyJson) {
+			this.setState({ createLoading: false });
+			this.props.history.push(`/posts/${response.bodyJson._id}/`);
+		}
+	}
+
+	async componentDidMount () {
+		const { dispatch } = this.props;
+		await dispatch(fetchPostsIfNeeded());
+	}
+
+	render({ posts }, { createLoading }) {
 		return (
 			<Container>
 				<Grid columns="equal" verticalAlign="middle">
 			    <Grid.Row>
 			      <Grid.Column>
 							<Header as="span" size="huge">Posts</Header>
-							<Button
-								basic
-								size="small"
-								compact
-								style={{ marginLeft: '20px', verticalAlign: '5px' }}
-							>
-								New
-							</Button>
+							<Button basic size="small" compact loading={createLoading} disabled={createLoading} style={{ marginLeft: '20px', verticalAlign: '5px' }} onClick={this.createPost}>New</Button>
 						</Grid.Column>
 						<Grid.Column computer={6} textAlign="right">
 							<Breadcrumb sections={this.sections} />
@@ -52,38 +62,9 @@ class Posts extends Component {
 			  </Grid>
 				<Divider />
 				<List divided relaxed="very">
-					{
-						[0,1,2,3,4,5,6,7].map(item => (
-							<List.Item>
-								<List.Content>
-									<Grid columns="equal" verticalAlign="middle">
-										<Grid.Row>
-											<Grid.Column>
-												<List.Header as="span">
-													<Link href={`/posts/${item}`}>Semantic-Org/Semantic-UI</Link>
-												</List.Header>
-												<List.Description as="a">Updated 10 mins ago</List.Description>
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Header as="span" size="tiny" disabled>2015</Header>
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Label as="span" content="Design" />
-												<Label as="span" content="Development" />
-											</Grid.Column>
-											<Grid.Column computer={3} textAlign="right">
-												<Button basic size="small">Edit</Button>
-												<Button basic icon color="red" size="small">
-									        <Icon name="trash" />
-									      </Button>
-												<Icon name="bars" color="grey" style={{ marginLeft: '10px' }} />
-											</Grid.Column>
-										</Grid.Row>
-									</Grid>
-								</List.Content>
-							</List.Item>
-						))
-					}
+					{ posts.items && posts.items.map(post => (
+						<Post key={post._id} post={post} />
+					)) }
 					<Divider />
 					<Grid columns="equal" verticalAlign="middle">
 						<Grid.Row>
@@ -108,6 +89,6 @@ class Posts extends Component {
 }
 
 
-const mapStateToProps = (state) => ({ Posts: state.Posts });
+const mapStateToProps = (state) => ({ posts: state.posts });
 
 export default connect(mapStateToProps)(Posts);
