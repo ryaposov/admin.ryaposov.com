@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Component } from 'preact';
+import { Router, route } from 'preact-router';
+
 import Header from './components/header';
 import Footer from './components/footer';
 import Home from './routes/home';
@@ -7,25 +9,35 @@ import Project from './routes/project';
 import Posts from './routes/posts';
 import Post from './routes/post';
 import Login from './routes/login';
-import AppRouter from './components/appRouter';
+import Page404 from './routes/404';
 
-const Routes = () => (
-	<Router>
-		<div className={'wrapper'}>
-			<Header />
-			<AppRouter>
-				<Switch>
-					<Route exact path="/" component={Home} />
-					<Route path="/projects/:id" component={Project} />
-					<Route path="/projects/" component={Projects} />
-					<Route path="/posts/:id" component={Post} />
-					<Route path="/posts/" component={Posts} />
-					<Route path="/login/" component={Login} />
-				</Switch>
-			</AppRouter>
-			<Footer />
-		</div>
-	</Router>
-);
+class Routes extends Component {
+	handleRoute = e => {
+		let token = localStorage.getItem('token');
+		if (!token && e.url.indexOf('login') < 0) {
+			route('/login/', false);
+		}
+	};
+
+	render () {
+		return (
+			<div class="wrapper">
+				<Header />
+				<div class="wrapper__content">
+					<Router onChange={this.handleRoute}>
+						<Home path="/" />
+						<Project path="/projects/:id/" />
+						<Projects path="/projects/" />
+						<Post path="/posts/:id/" />
+						<Posts path="/posts/" />
+						<Login path="/login/" />
+						<Page404 default path="*" />
+					</Router>
+				</div>
+				<Footer />
+			</div>
+		);
+	}
+}
 
 export default Routes;

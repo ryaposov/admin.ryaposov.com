@@ -1,5 +1,6 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
+import { route } from 'preact-router';
 import {
 	Container,
 	List,
@@ -10,15 +11,15 @@ import {
 	Button,
 	Pagination
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import { fetchPostsIfNeeded, createPost, fetchPosts } from '../../store/actions/posts';
+import { fetchPosts, createPost } from '../../store/actions/posts';
 import Post from '../../components/postItem';
 
 class Posts extends Component {
 	sections = [
 		{
 			key: 'Dashboard',
-			content: (<Link to="/">Dashboard</Link>)
+			content: 'Dashboard',
+			href: '/'
 		},
 		{
 			key: 'Posts',
@@ -34,16 +35,15 @@ class Posts extends Component {
 	createPost = async () => {
 		this.setState({ createLoading: true });
 		let response = await createPost({ title: 'New Post' });
-		await this.props.dispatch(fetchPosts());
+		await fetchPosts();
 		if (response.bodyJson && '_id' in response.bodyJson) {
 			this.setState({ createLoading: false });
-			this.props.history.push(`/posts/${response.bodyJson._id}/`);
+			route(`/posts/${response.bodyJson._id}/`, false);
 		}
 	}
 
 	async componentDidMount () {
-		const { dispatch } = this.props;
-		await dispatch(fetchPostsIfNeeded());
+		fetchPosts();
 	}
 
 	render({ posts }, { createLoading }) {

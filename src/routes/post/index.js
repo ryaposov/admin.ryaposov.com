@@ -12,7 +12,7 @@ import {
 	Confirm,
 	Message
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { route } from 'preact-router';
 import { deletePost } from '../../store/actions/posts';
 
 const options = [
@@ -38,11 +38,13 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 	sections = [
 		{
 			key: 'Dashboard',
-			content: (<Link to={'/'}>Dashboard</Link>)
+			content: 'Dashboard',
+			href: '/'
 		},
 		{
 			key: 'Posts',
-			content: (<Link to={'/posts/'}>Posts</Link>)
+			content: 'Posts',
+			href: '/posts/'
 		},
 		{
 			key: 'Post',
@@ -59,7 +61,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 	}
 
 	contentLoaded = () => !this.state.loading &&
-		('_id' in this.state.post && this.state.post._id === this.props.match.params.id)
+		('_id' in this.state.post && this.state.post._id === this.props.id)
 
 	updateForm = (e, data) => {
 		if (!data) data = e.target;
@@ -84,7 +86,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 
 	init = async () => {
 		this.setState({ loading: true });
-		posts.getOne('posts', this.props.match.params.id)
+		posts.getOne('posts', this.props.id)
 			.then(response => {
 				this.setState({ post: response.bodyJson });
 				this.setState({
@@ -100,7 +102,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 		this.setState({ submitLoading: true });
 		let payload = { ...this.state.post };
 		delete payload._id;
-		posts.editOne('posts', this.props.match.params.id, payload)
+		posts.editOne('posts', this.props.id, payload)
 			.then(response => {
 				this.setState({ submitLoading: false, message: { state: true, header: 'Successfully saved.' } });
 				setTimeout(() => this.setState({ message: { state: false, header: '' } }), 5000);
@@ -110,7 +112,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 	delete = async () => {
 		await deletePost(this.state.post._id);
 		this.hideConfirm();
-		this.props.history.push('/posts/');
+		route('/posts/', false);
 	}
 
 	showConfirm = () => this.setState({ confirmOpen: true })

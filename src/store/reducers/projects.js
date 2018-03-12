@@ -11,6 +11,7 @@ let defaultState = {
 function projects(state = defaultState, action) {
 	switch (action.type) {
 		case RECEIVE_PROJECTS:
+		console.log(action)
 			return Object.assign({}, state, {
 				isFetching: false,
 				didInvalidate: false,

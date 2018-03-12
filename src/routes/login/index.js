@@ -1,6 +1,7 @@
 import style from './style.scss';
 import { connect } from 'preact-redux';
 import { Component } from 'preact';
+import { route } from 'preact-router';
 import {
 	Container,
 	Header,
@@ -28,7 +29,7 @@ class LoginForm extends Component {
 	submit = async (e) => {
 		if (e.target.checkValidity()) {
 			this.setState({ loading: true });
-			let response = await this.props.dispatch(callSignIn(this.state.form));
+			let response = await callSignIn(this.state.form);
 			if (response.status === 403) {
 				this.setState({
 					validation: {
@@ -38,16 +39,10 @@ class LoginForm extends Component {
 				});
 				this.setState({ loading: false });
 			} else if (response.status === 200) {
-				if (this.props.user.user.token) {
-					setTimeout(() => {
-						this.setState({ loading: true });
-						this.props.history.push('/');
-					}, 1000);
-				} else {
-					this.setState({ loading: false });
-				}
+				localStorage.setItem('token', this.props.user.user.token);
+				this.setState({ loading: false });
+				route('/', false);
 			}
-
 		}
 	}
 

@@ -3,9 +3,9 @@ import { debounce } from 'lodash';
 import style from './style.scss';
 import { connect } from 'preact-redux';
 import { Container, Image, Menu, Search } from 'semantic-ui-react';
-import { Link, withRouter } from 'react-router-dom';
 import MenuLink from './link';
 import menuLinks from './menuLinks';
+import { route } from 'preact-router';
 import { calllLogOut } from '../../store/actions/user';
 import * as crud from '../../api/crud';
 
@@ -20,8 +20,8 @@ class Header extends Component {
   resetSearch = () => this.setState({ isLoading: false, searchResults: [], searchString: '' })
 
   handleResultSelect = (e, { result }) => {
-		this.props.history.push(`/${result.collection}/${result._id}/`)
-	}
+		route(`/${result.collection}/${result._id}/`);
+  }
 
 	handleSearchChange = (e, { value }) => {
 		this.setState({ isLoading: true, searchString: value });
@@ -34,18 +34,18 @@ class Header extends Component {
 		if (response.bodyJson && Object.keys(response.bodyJson).length) {
 			Object.keys(response.bodyJson).forEach(model => {
 				response.bodyJson[model].map(item => item.collection = model);
-			}, )
-			let results = Object.keys(response.bodyJson).reduce((a, b) => {
-				return a.concat(response.bodyJson[b]);
-			}, [])
+			}, );
+			let results = Object.keys(response.bodyJson).reduce((a, b) => (
+				a.concat(response.bodyJson[b])
+			), []);
 			this.setState({ searchResults: results });
 		}
 		this.setState({ isLoading: false });
 	}, 1000)
 
 	logOut = async () => {
-		await this.props.dispatch(calllLogOut());
-		this.props.history.replace('/login/');
+		calllLogOut();
+		route('/login/', true);
 	}
 
 	componentWillMount() {
@@ -56,7 +56,7 @@ class Header extends Component {
 		return (
 			<Menu fixed="top" inverted className={style.header}>
 				<Container>
-					<Menu.Item as={Link} to="/" className={style.header__logo} header>
+					<Menu.Item as="a" href="/" className={style.header__logo} header>
 						<Image
 							size="mini"
 							src="/assets/img/logo-white.svg"
@@ -92,4 +92,4 @@ class Header extends Component {
 
 const mapStateToProps = (state) => ({ user: state.user });
 
-export default withRouter(connect(mapStateToProps)(Header));
+export default connect(mapStateToProps)(Header);

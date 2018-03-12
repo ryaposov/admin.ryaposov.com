@@ -1,4 +1,5 @@
 import * as projects from '../../api/crud';
+import store from '../../store';
 
 export const RECEIVE_PROJECTS = 'RECEIVE_PROJECTS';
 
@@ -11,30 +12,8 @@ function receiveProjects(response) {
 }
 
 export function fetchProjects(category = false) {
-	return dispatch => {
-		return projects.getAll('projects')
-			.then(response => validateProjectsResponse(response, dispatch));
-	};
-}
-
-function validateProjectsResponse (response, dispatch) {
-	if (response.status === 200 && response.bodyJson.length) {
-		return dispatch(receiveProjects(response.bodyJson));
-	}
-}
-
-function shouldFetchProjects(state, category) {
-	return true;
-	// return !state.projects.items.length;
-}
-
-export function fetchProjectsIfNeeded(category = false) {
-	return (dispatch, getState) => {
-		let should = shouldFetchProjects(getState(), category);
-		if (should) {
-			return dispatch(fetchProjects(category));
-		}
-	};
+	return projects.getAll('projects')
+		.then(response => store.dispatch(receiveProjects(response.bodyJson)));
 }
 
 export function deleteProject (id) {

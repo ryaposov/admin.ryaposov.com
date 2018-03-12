@@ -3,7 +3,6 @@ import style from './style.scss';
 import { Container, Image, Menu } from 'semantic-ui-react';
 import { connect } from 'preact-redux';
 import MenuLink from '../header/link';
-import { Link } from 'react-router-dom';
 import menuLinks from '../header/menuLinks';
 
 class Footer extends Component {
@@ -15,7 +14,7 @@ class Footer extends Component {
 		return (
 			<Menu className={style.footer}>
 				<Container>
-					<Menu.Item as={Link}  className={style.footer__logo} header to="/">
+					<Menu.Item as="a" className={style.footer__logo} header href="/">
 						<Image
 							size="mini"
 							src="/assets/img/logo-black.svg"

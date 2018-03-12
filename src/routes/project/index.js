@@ -1,4 +1,5 @@
 import { Component } from 'preact';
+import { route } from 'preact-router';
 import * as projects from '../../api/crud';
 import {
 	Container,
@@ -12,7 +13,6 @@ import {
 	Confirm,
 	Message
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
 import { deleteProject } from '../../store/actions/projects';
 
 const options = [
@@ -38,11 +38,13 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 	sections = [
 		{
 			key: 'Dashboard',
-			content: (<Link to={'/'}>Dashboard</Link>)
+			content: 'Dashboard',
+			href: '/'
 		},
 		{
 			key: 'Projects',
-			content: (<Link to={'/projects/'}>Projects</Link>)
+			content: 'Projects',
+			href: '/projects/'
 		},
 		{
 			key: 'Project',
@@ -60,7 +62,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 
 	contentLoaded = () => {
 		return !this.state.loading &&
-		('_id' in this.state.project && this.state.project._id === this.props.match.params.id);
+		('_id' in this.state.project && this.state.project._id === this.props.id);
 	}
 
 	updateForm = (e, data) => {
@@ -86,7 +88,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 
 	init = async () => {
 		this.setState({ loading: true });
-		projects.getOne('projects', this.props.match.params.id)
+		projects.getOne('projects', this.props.id)
 			.then(response => {
 				this.setState({ project: response.bodyJson });
 				this.setState({
@@ -102,7 +104,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		this.setState({ submitLoading: true });
 		let payload = { ...this.state.project };
 		delete payload._id;
-		projects.editOne('projects', this.props.match.params.id, payload)
+		projects.editOne('projects', this.props.id, payload)
 			.then(response => {
 				this.setState({ submitLoading: false, message: { state: true, header: 'Successfully saved.' } });
 				setTimeout(() => this.setState({ message: { state: false, header: '' } }), 5000);
@@ -112,7 +114,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 	delete = async () => {
 		await deleteProject(this.state.project._id);
 		this.hideConfirm();
-		this.props.history.push('/projects/');
+		route('/projects/', false);
 	}
 
 	showConfirm = () => this.setState({ confirmOpen: true })
@@ -192,7 +194,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 					open={confirmOpen}
 					onCancel={this.hideConfirm}
 					onConfirm={this.delete}
-					/>
+				/>
 			</Container>
 		);
 	}

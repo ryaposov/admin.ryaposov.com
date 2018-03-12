@@ -1,5 +1,8 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
+import { route } from 'preact-router';
+import { fetchProjects, createProject } from '../../store/actions/projects';
+import Project from '../../components/projectItem';
 import {
 	Container,
 	List,
@@ -10,15 +13,13 @@ import {
 	Button,
 	Pagination
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import { fetchProjectsIfNeeded, createProject, fetchProjects } from '../../store/actions/projects';
-import Project from '../../components/projectItem';
 
 class Projects extends Component {
 	sections = [
 		{
 			key: 'Dashboard',
-			content: (<Link to="/">Dashboard</Link>)
+			content: 'Dashboard',
+			href: '/'
 		},
 		{
 			key: 'Projects',
@@ -34,16 +35,14 @@ class Projects extends Component {
 	createProject = async () => {
 		this.setState({ createLoading: true });
 		let response = await createProject({ title: 'New Project' });
-		await this.props.dispatch(fetchProjects());
 		if (response.bodyJson && '_id' in response.bodyJson) {
 			this.setState({ createLoading: false });
-			this.props.history.push(`/projects/${response.bodyJson._id}/`);
+			route(`/projects/${response.bodyJson._id}/`, false);
 		}
 	}
 
 	async componentDidMount () {
-		const { dispatch } = this.props;
-		await dispatch(fetchProjectsIfNeeded());
+		await fetchProjects();
 	}
 
 	render({ projects }, { createLoading }) {

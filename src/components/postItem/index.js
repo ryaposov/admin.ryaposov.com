@@ -1,5 +1,7 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
+import { Link } from 'preact-router';
+import { deletePost, fetchPosts } from '../../store/actions/posts';
 import {
 	List,
 	Grid,
@@ -7,16 +9,11 @@ import {
 	Icon,
 	Label
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import {
-	deletePost,
-	fetchPosts
-} from '../../store/actions/posts';
 
 class Posts extends Component {
 	delete = async () => {
 		await deletePost(this.props.post._id);
-		await this.props.dispatch(fetchPosts());
+		fetchPosts();
 	}
 
 	render ({ post }) {
@@ -27,7 +24,7 @@ class Posts extends Component {
 						<Grid.Row>
 							<Grid.Column>
 								<List.Header as="span">
-									<Link to={`/posts/${post._id}`}>{post.title}</Link>
+									<Link href={`/posts/${post._id}`}>{post.title}</Link>
 								</List.Header>
 								{post.text && <List.Description as="span">{post.text.substring(0, 30)}...</List.Description>}
 							</Grid.Column>
@@ -37,7 +34,7 @@ class Posts extends Component {
 								))}
 							</Grid.Column>
 							<Grid.Column computer={3} textAlign="right">
-								<Button as={Link} to={`/posts/${post._id}`} basic size="small">Edit</Button>
+								<Button as="a" href={`/posts/${post._id}`} basic size="small">Edit</Button>
 								<Button basic icon color="red" style={{ marginLeft: '10px' }} size="small" onClick={this.delete}>
 									<Icon name="trash" />
 								</Button>

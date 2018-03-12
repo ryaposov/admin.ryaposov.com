@@ -1,4 +1,5 @@
 import * as posts from '../../api/crud';
+import store from '../../store';
 
 export const RECEIVE_POSTS = 'RECEIVE_POSTS';
 
@@ -11,24 +12,8 @@ function receivePosts(response) {
 }
 
 export function fetchPosts(category = false) {
-	return dispatch => {
-		return posts.getAll('posts')
-			.then(response => dispatch(receivePosts(response.bodyJson)));
-	};
-}
-
-function shouldFetchPosts(state, category) {
-	return true;
-	// return !state.posts.items.length;
-}
-
-export function fetchPostsIfNeeded(category = false) {
-	return (dispatch, getState) => {
-		let should = shouldFetchPosts(getState(), category);
-		if (should) {
-			return dispatch(fetchPosts(category));
-		}
-	};
+	return posts.getAll('posts')
+		.then(response => store.dispatch(receivePosts(response.bodyJson)));
 }
 
 export function deletePost (id) {

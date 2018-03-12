@@ -8,7 +8,7 @@ import {
 	Icon,
 	Label
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'preact-router';
 import {
 	deleteProject,
 	fetchProjects
@@ -17,7 +17,7 @@ import {
 class Projects extends Component {
 	delete = async () => {
 		await deleteProject(this.props.project._id);
-		await this.props.dispatch(fetchProjects());
+		fetchProjects();
 	}
 
 	render ({ project }) {
@@ -28,7 +28,7 @@ class Projects extends Component {
 						<Grid.Row>
 							<Grid.Column>
 								<List.Header as="span">
-									<Link to={`/projects/${project._id}`}>{project.title}</Link>
+									<Link href={`/projects/${project._id}`}>{project.title}</Link>
 								</List.Header>
 								{project.text && <List.Description as="span">{project.text.substring(0, 30)}...</List.Description>}
 							</Grid.Column>
@@ -41,7 +41,7 @@ class Projects extends Component {
 								))}
 							</Grid.Column>
 							<Grid.Column computer={3} textAlign="right">
-								<Button as={Link} to={`/projects/${project._id}`} basic size="small">Edit</Button>
+								<Button as="a" href={`/projects/${project._id}`} basic size="small">Edit</Button>
 								<Button basic icon color="red" style={{ marginLeft: '10px' }} size="small" onClick={this.delete}>
 									<Icon name="trash" />
 								</Button>
