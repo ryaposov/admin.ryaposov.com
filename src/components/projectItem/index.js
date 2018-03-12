@@ -36,7 +36,7 @@ class Projects extends Component {
 								<Header as="span" size="tiny" disabled>{project.year}</Header>
 							</Grid.Column>
 							<Grid.Column computer={3} textAlign="left">
-								{project.category.map((category, i) => (
+								{project.category.length && project.category.map((category, i) => (
 									<Label as="span" key={project._id + 'category' + i} content={category} />
 								))}
 							</Grid.Column>

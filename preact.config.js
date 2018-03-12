@@ -34,10 +34,7 @@ export default (config, env, helpers) => {
 	// All recipes here: https://github.com/developit/preact-cli/wiki/Config-Recipes
 	// Disable sourcemaps
 	// Copy all contents of assets folder
-	config.plugins.push(
-		new helpers.webpack.optimize.LimitChunkCountPlugin({
-		  maxChunks: 1
-		})
-	);
-
+	config.plugins.push(new helpers.webpack.optimize.LimitChunkCountPlugin({
+	  maxChunks: 1
+	}));
 };

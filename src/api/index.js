@@ -17,11 +17,13 @@ export const config = () => ({
 export default (url, options = {}) => {
 	let state = store.getState();
 	let configuration = {};
+
 	configuration = Object.assign({}, config().options, options);
+
 	if (state.user.user.token) {
-		configuration.headers.authorization = state.user.user.token
+		configuration.headers.authorization = state.user.user.token;
 	}
-	console.log(configuration)
+
 	// console.log(Object.assign(config.options, options))
 	return fetch(config().base + url, configuration)
 		.then(async (response, i) => {

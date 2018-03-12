@@ -2,7 +2,7 @@ import api from './index';
 
 export const getAll = async (collection) => {
 	try {
-		const data = await api(`/crud/${collection}/`, { method: 'GET' });
+		const data = await api(`/secure/${collection}/`, { method: 'GET' });
 		return Promise.resolve(data);
 	} catch (error) {
 		return Promise.resolve(error);
@@ -11,7 +11,7 @@ export const getAll = async (collection) => {
 
 export const getOne = async (collection, id) => {
 	try {
-		const data = await api(`/crud/${collection}/${id}`, { method: 'GET' });
+		const data = await api(`/secure/${collection}/${id}`, { method: 'GET' });
 		return Promise.resolve(data);
 	} catch (error) {
 		return Promise.resolve(error);

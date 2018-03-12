@@ -1,6 +1,5 @@
 import { Component } from 'preact';
 import { connect } from 'preact-redux';
-import style from './style.scss';
 import { Link } from 'preact-router/match';
 import {
 	Container,
@@ -11,7 +10,6 @@ import {
 	List,
 	Button,
 	Statistic,
-	Image,
 	Icon
 } from 'semantic-ui-react';
 
@@ -96,7 +94,6 @@ class Home extends Component {
 		);
 	}
 }
-
 
 const mapStateToProps = (state) => ({ projects: state.projects });
 

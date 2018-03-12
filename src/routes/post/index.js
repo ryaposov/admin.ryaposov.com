@@ -176,6 +176,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 								</Grid.Column>
 								<Grid.Column>
 									<Form.Input size="big" placeholder="Title" name="title" onInput={this.updateForm} value={post.title} />
+									<Form.TextArea placeholder="Post introtext..." value={post.introtext} name="introtext" onInput={this.updateForm} rows={8} />
 									<Form.TextArea placeholder="Intro text..." name="text" onInput={this.updateForm} value={post.text} rows={35} />
 								</Grid.Column>
 					    </Grid.Row>
