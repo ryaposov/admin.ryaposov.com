@@ -1,6 +1,8 @@
 import { Component } from 'preact';
 import { route } from 'preact-router';
 import * as projects from '../../api/crud';
+import * as files from '../../api/file';
+import { config } from '../../api';
 import {
 	Container,
 	Breadcrumb,
@@ -11,9 +13,13 @@ import {
 	Form,
 	Loader,
 	Confirm,
-	Message
+	Message,
+	Label
 } from 'semantic-ui-react';
 import { deleteProject } from '../../store/actions/projects';
+import FileInput from 'react-fine-uploader/file-input';
+import ProjectImage from '../../components/projectImage';
+import FineUploaderTraditional from 'fine-uploader-wrappers';
 
 const options = [
 	{ key: 'development', text: 'Development', value: 'Development' },
@@ -28,7 +34,9 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		loading: false,
 		submitLoading: false,
 		confirmOpen: false,
+		textLength: 0,
 		project: {},
+		files: [],
 		message: {
 			state: false,
 			header: ''
@@ -60,16 +68,18 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		});
 	}
 
-	contentLoaded = () => {
-		return !this.state.loading &&
-		('_id' in this.state.project && this.state.project._id === this.props.id);
-	}
+	contentLoaded = () => !this.state.loading &&
+		('_id' in this.state.project && this.state.project._id === this.props.id)
 
 	updateForm = (e, data) => {
 		if (!data) data = e.target;
 
 		let name = data.name;
 		let value = data.value;
+
+		if (name === 'text') {
+			this.setState({ textLength: value.length });
+		}
 
 		if (name && (value !== undefined || data.type === 'checkbox' )) {
 			if (name.indexOf('colors') > -1) {
@@ -88,16 +98,23 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 
 	init = async () => {
 		this.setState({ loading: true });
-		projects.getOne('projects', this.props.id)
-			.then(response => {
-				this.setState({ project: response.bodyJson });
-				this.setState({
-					links: response.bodyJson.links.map(link => (
-						{ text: link, value: link }
-					), [])
-				});
+
+		// Get project
+		let response = await projects.getOne('projects', this.props.id);
+		if (response) {
+			this.setState({
+				project: response.bodyJson,
+				textLength: response.bodyJson.text.length,
+				links: response.bodyJson.links.map(link => ({ text: link, value: link }), [])
 			});
+		}
+		await this.getFiles();
 		this.setState({ loading: false });
+	}
+
+	getFiles = async () => {
+		let response = await files.getAll(this.props.id);
+		if (response) this.setState({ files: response.bodyJson });
 	}
 
 	submit = () => {
@@ -117,6 +134,24 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		route('/projects/', false);
 	}
 
+	uploader = () => (
+		new FineUploaderTraditional({
+			options: {
+				debug: false,
+				expected: true,
+				request: {
+					customHeaders: {
+						authorization: localStorage.getItem('token')
+					},
+					endpoint: `//localhost:8082/secure/projects/${this.props.id}/upload`
+				},
+				callbacks: {
+					onAllComplete: this.getFiles
+				}
+			}
+		})
+	)
+
 	showConfirm = () => this.setState({ confirmOpen: true })
 	hideConfirm = () => this.setState({ confirmOpen: false })
 
@@ -124,7 +159,20 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		this.init();
 	}
 
-	render (props, { project, options, links, loading, submitLoading, confirmOpen, message }) {
+	render (
+		{ id },
+		{
+			project,
+			options,
+			links,
+			loading,
+			submitLoading,
+			confirmOpen,
+			message,
+			files,
+			textLength
+		}
+	) {
 		return (
 			<Container>
 				<Grid columns="equal" verticalAlign="middle">
@@ -164,9 +212,15 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 					    <Grid.Row>
 					      <Grid.Column computer={4}>
 									<Form.Input label="Client" value={project.client} placeholder="Client" name="client" onInput={this.updateForm} />
-									<Form.Input label="Year" value={project.year} placeholder="Year" name="year" onInput={this.updateForm} />
-									<Form.Select multiple selection options={options} value={project.category} label="Category" name="category" onChange={this.updateForm} placeholder="Type" />
-									<Form.Select multiple selection allowAdditions search value={project.links} options={links} name="links" onChange={this.updateForm} onAddItem={this.addLink} label="Links" placeholder="Links" />
+									<Form.Input label="Date" value={project.date} placeholder="2016-03-12" name="date" onInput={this.updateForm} />
+									<Form.Select multiple selection options={options} value={project.category} label="Category" name="category"
+										onChange={this.updateForm} placeholder="Type"
+									/>
+									<Form.Select multiple selection allowAdditions search value={project.links} options={links}
+										name="links" onChange={this.updateForm} onAddItem={this.addLink} label="Links" placeholder="Links"
+									/>
+									<Form.Input label="Image" value={project.image} placeholder="image.jpg" name="image" onInput={this.updateForm} />
+									<Form.Input label="Thumbnail" value={project.thumbnail} placeholder="image.jpg" name="thumbnail" onInput={this.updateForm} />
 									<Form.Input label="Main color" value={project.colors.main} placeholder="#000000" name="colors.main" onInput={this.updateForm} />
 									<Form.Input label="Second color" value={project.colors.second} placeholder="#000000" name="colors.second" onInput={this.updateForm} />
 									<Form.TextArea label="Goal" placeholder="Project goal..." value={project.goal} name="goal" onInput={this.updateForm} rows={8} />
@@ -183,7 +237,29 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 								</Grid.Column>
 								<Grid.Column>
 									<Form.Input size="big" placeholder="Title" name="title" onInput={this.updateForm} value={project.title} />
-									<Form.TextArea placeholder="Intro text..." name="text" onInput={this.updateForm} value={project.text} rows={35} />
+									<Form.TextArea placeholder="Intro text..." name="text" onInput={this.updateForm} value={project.text} rows={20} />
+									<Label>{textLength}</Label>
+									<Grid padded={false} verticalAlign="middle" style={{ marginTop: '20px' }}>
+										<Grid.Column computer={8}>
+											<Header as="h3">Images</Header>
+										</Grid.Column>
+										<Grid.Column computer={8} textAlign="right">
+											<FileInput multiple accept="image/*" uploader={this.uploader()}>
+												<Button>Choose Files</Button>
+											</FileInput>
+										</Grid.Column>
+										{
+											!files.length ? (
+												<Header as="h4">No images yet</Header>
+											) : (
+												files.map(file => (
+													<Grid.Column computer={4}>
+														<ProjectImage file={file} baseUrl={config().base} id={id} removeHandler={this.getFiles} />
+													</Grid.Column>
+												))
+											)
+										}
+									</Grid>
 								</Grid.Column>
 					    </Grid.Row>
 					  </Grid>

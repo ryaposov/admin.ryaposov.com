@@ -1,0 +1,30 @@
+.image {
+	position: relative;
+	min-height: 110px;
+	background-color: gray;
+
+	&__label {
+		cursor: pointer;
+
+		&:active {
+			opacity: .7;
+		}
+	}
+
+	img {
+		object-fit: cover;
+		height: 100%;
+		width: 100%;
+	}
+
+	i {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 30px;
+		height: 30px;
+		display: block;
+		cursor: pointer;
+		padding: 10px;
+	}
+}
