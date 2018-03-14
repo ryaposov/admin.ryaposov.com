@@ -143,7 +143,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 					customHeaders: {
 						authorization: localStorage.getItem('token')
 					},
-					endpoint: `//localhost:8082/secure/projects/${this.props.id}/upload`
+					endpoint: `${config().base}/secure/projects/${this.props.id}/upload`
 				},
 				callbacks: {
 					onAllComplete: this.getFiles
