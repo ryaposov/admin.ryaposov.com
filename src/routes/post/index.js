@@ -10,24 +10,25 @@ import {
 	Form,
 	Loader,
 	Confirm,
-	Message
+	Message,
+	Label
 } from 'semantic-ui-react';
 import { route } from 'preact-router';
+import { config } from '../../api';
+import * as files from '../../api/file';
+import FileInput from 'react-fine-uploader/file-input';
+import UploadedImage from '../../components/uploadedImage';
+import FineUploaderTraditional from 'fine-uploader-wrappers';
 import { deletePost } from '../../store/actions/posts';
-
-const options = [
-	{ key: 'development', text: 'Development', value: 'Development' },
-	{ key: 'design', text: 'Design', value: 'Design' }
-];
 
 class Post extends Component { // eslint-disable-line react-prefer-stateless-function
 
 	state = {
-		options,
 		links: [],
 		loading: false,
 		submitLoading: false,
 		confirmOpen: false,
+		textLength: 0,
 		message: {
 			state: false,
 			header: ''
@@ -69,6 +70,10 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 		let name = data.name;
 		let value = data.value;
 
+		if (name === 'text') {
+			this.setState({ textLength: value.length });
+		}
+
 		if (name && (value !== undefined || data.type === 'checkbox' )) {
 			if (name.indexOf('colors') > -1) {
 				let colorField = data.name.split('.')[1];
@@ -84,18 +89,42 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 		}
 	}
 
+	uploader = () => (
+		new FineUploaderTraditional({
+			options: {
+				debug: false,
+				expected: true,
+				request: {
+					customHeaders: {
+						authorization: localStorage.getItem('token')
+					},
+					endpoint: `${config().base}/secure/posts/${this.props.id}/upload`
+				},
+				callbacks: {
+					onAllComplete: this.getFiles
+				}
+			}
+		})
+	)
+
 	init = async () => {
 		this.setState({ loading: true });
 		posts.getOne('posts', this.props.id)
 			.then(response => {
-				this.setState({ post: response.bodyJson });
 				this.setState({
+					post: response.bodyJson,
 					tags: response.bodyJson.tags.map(tag => (
 						{ text: tag, value: tag }
 					), [])
 				});
 			});
+		await this.getFiles();
 		this.setState({ loading: false });
+	}
+
+	getFiles = async () => {
+		let response = await files.getAll(this.props.id);
+		if (response) this.setState({ files: response.bodyJson });
 	}
 
 	submit = () => {
@@ -122,7 +151,21 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 		this.init();
 	}
 
-	render (props, { post, options, tags, loading, submitLoading, confirmOpen, message }) {
+	render (
+		{
+			id
+		},
+		{
+			post,
+			tags,
+			loading,
+			submitLoading,
+			confirmOpen,
+			message,
+			textLength,
+			files
+		}
+	) {
 		return (
 			<Container>
 				<Grid columns="equal" verticalAlign="middle">
@@ -180,6 +223,28 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 									<Form.Input size="big" placeholder="Title" name="title" onInput={this.updateForm} value={post.title} />
 									<Form.TextArea placeholder="Post introtext..." value={post.introtext} name="introtext" onInput={this.updateForm} rows={8} />
 									<Form.TextArea placeholder="Intro text..." name="text" onInput={this.updateForm} value={post.text} rows={35} />
+									<Label>{textLength}</Label>
+									<Grid padded={false} verticalAlign="middle" style={{ marginTop: '20px' }}>
+										<Grid.Column computer={8}>
+											<Header as="h3">Images</Header>
+										</Grid.Column>
+										<Grid.Column computer={8} textAlign="right">
+											<FileInput multiple accept="image/*" uploader={this.uploader()}>
+												<Button>Choose Files</Button>
+											</FileInput>
+										</Grid.Column>
+										{
+											!files.length ? (
+												<Header as="h4">No images yet</Header>
+											) : (
+												files.map(file => (
+													<Grid.Column key={file} computer={4}>
+														<UploadedImage file={file} baseUrl={config().base} id={id} removeHandler={this.getFiles} />
+													</Grid.Column>
+												))
+											)
+										}
+									</Grid>
 								</Grid.Column>
 					    </Grid.Row>
 					  </Grid>

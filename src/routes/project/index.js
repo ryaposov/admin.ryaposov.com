@@ -18,7 +18,7 @@ import {
 } from 'semantic-ui-react';
 import { deleteProject } from '../../store/actions/projects';
 import FileInput from 'react-fine-uploader/file-input';
-import ProjectImage from '../../components/projectImage';
+import UploadedImage from '../../components/uploadedImage';
 import FineUploaderTraditional from 'fine-uploader-wrappers';
 
 const options = [
@@ -238,7 +238,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 								<Grid.Column>
 									<Form.Input size="big" placeholder="Title" name="title" onInput={this.updateForm} value={project.title} />
 									<Form.TextArea placeholder="Intro text..." name="text" onInput={this.updateForm} value={project.text} rows={20} />
-									<Label>{textLength}</Label>
+									<Label>{textLength} - avegare 270</Label>
 									<Grid padded={false} verticalAlign="middle" style={{ marginTop: '20px' }}>
 										<Grid.Column computer={8}>
 											<Header as="h3">Images</Header>
@@ -253,8 +253,8 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 												<Header as="h4">No images yet</Header>
 											) : (
 												files.map(file => (
-													<Grid.Column computer={4}>
-														<ProjectImage file={file} baseUrl={config().base} id={id} removeHandler={this.getFiles} />
+													<Grid.Column key={file} computer={4}>
+														<UploadedImage file={file} baseUrl={config().base} id={id} removeHandler={this.getFiles} />
 													</Grid.Column>
 												))
 											)
