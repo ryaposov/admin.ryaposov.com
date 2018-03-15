@@ -62,6 +62,29 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 		}
 	];
 
+	sizes = [
+		{
+			value: '',
+			text: 'No value'
+		},
+		{
+			value: '1-5',
+			text: '1-5'
+		},
+		{
+			value: '2-5',
+			text: '2-5'
+		},
+		{
+			value: '3-5',
+			text: '3-5'
+		},
+		{
+			value: '5-5',
+			text: '5-5'
+		}
+	]
+
 	addLink = (e, { value }) => {
 		this.setState({
 			links: [{ text: value, value }, ...this.state.links]
@@ -218,6 +241,9 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 									/>
 									<Form.Select multiple selection allowAdditions search value={project.links} options={links}
 										name="links" onChange={this.updateForm} onAddItem={this.addLink} label="Links" placeholder="Links"
+									/>
+									<Form.Select selection value={project.size} options={this.sizes}
+										name="size" onChange={this.updateForm} label="Size" placeholder="Size"
 									/>
 									<Form.Input label="Image" value={project.image} placeholder="image.jpg" name="image" onInput={this.updateForm} />
 									<Form.Input label="Thumbnail" value={project.thumbnail} placeholder="image.jpg" name="thumbnail" onInput={this.updateForm} />
