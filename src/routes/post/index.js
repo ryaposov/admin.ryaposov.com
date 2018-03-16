@@ -204,6 +204,7 @@ class Post extends Component { // eslint-disable-line react-prefer-stateless-fun
 						<Grid columns="equal">
 					    <Grid.Row>
 					      <Grid.Column computer={4}>
+									<Form.Input label="Date" value={post.date} placeholder="2016-03-12" name="date" onInput={this.updateForm} />
 									<Form.Select multiple selection allowAdditions search value={post.tags} options={tags}
 										name="tags" onChange={this.updateForm} onAddItem={this.addTag} label="Tags" placeholder="Tags"
 									/>

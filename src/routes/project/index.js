@@ -31,6 +31,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 	state = {
 		options,
 		links: [],
+		stack: [],
 		loading: false,
 		submitLoading: false,
 		confirmOpen: false,
@@ -88,6 +89,12 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 	addLink = (e, { value }) => {
 		this.setState({
 			links: [{ text: value, value }, ...this.state.links]
+		});
+	}
+
+	addStack = (e, { value }) => {
+		this.setState({
+			stack: [{ text: value, value }, ...this.state.stack]
 		});
 	}
 
@@ -188,6 +195,7 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 			project,
 			options,
 			links,
+			stack,
 			loading,
 			submitLoading,
 			confirmOpen,
@@ -241,6 +249,9 @@ class Project extends Component { // eslint-disable-line react-prefer-stateless-
 									/>
 									<Form.Select multiple selection allowAdditions search value={project.links} options={links}
 										name="links" onChange={this.updateForm} onAddItem={this.addLink} label="Links" placeholder="Links"
+									/>
+									<Form.Select multiple selection allowAdditions search value={project.stack} options={stack}
+										name="stack" onChange={this.updateForm} onAddItem={this.addStack} label="Stack" placeholder="Stack"
 									/>
 									<Form.Select selection value={project.size} options={this.sizes}
 										name="size" onChange={this.updateForm} label="Size" placeholder="Size"
